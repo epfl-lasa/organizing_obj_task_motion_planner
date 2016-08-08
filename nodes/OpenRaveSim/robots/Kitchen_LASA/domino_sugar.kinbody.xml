@@ -1,0 +1,14 @@
+<KinBody name="domino_sugar">
+  <modelsdir>.</modelsdir>     <!--for relative path -->
+  <Body type="dynamic">
+    <Geom type="trimesh">
+      <Data>../objects//Objects_in_kitchen/domino_sugar.stl </Data>
+      <Render>../objects//Objects_in_kitchen/domino_sugar.stl </Render>
+      <Collision>../objects//Objects_in_kitchen/domino_sugar.stl </Collision>
+      <transparency>0.7</transparency>
+     <!-- <DiffuseColor>0.564706 0.933333 0.564706 </DiffuseColor>-->
+      <Translation>0.004429 0.00232 0</Translation>
+      <RotationAxis>0 0 1 53</RotationAxis>
+    </Geom>      
+  </Body>
+</KinBody>

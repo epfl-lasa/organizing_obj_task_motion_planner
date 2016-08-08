@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<launch>
+  <node pkg="organizing_obj_task_motion_planner" type="organizing_obj_task_motion_planner_py.py" name="organizing_obj_task_motion_planner" output="screen"/>
+  
+</launch>

@@ -1,0 +1,9 @@
+from organizing_obj_task_motion_planner_py import *
+
+crrtPoses = [-0.33164334, -0.00400644, 212.02381944, -0.14137304, 0.21248677, 176.49369886, 0.02591017, 0.19922812, 136.21972607]
+targetPoses = [-0.13919334, -1.31785508, 82.33719603, -0.20101912, -1.71602603, 144.13363736, -0.00421196, -1.64668047, 39.73772348]
+objectNames = ['kitchen_glass', 'kitchen_cup', 'mug']
+jointStateCrrt = [0,0,0,0,0,0,0]
+
+jointValueSeq = giveActionSeq(objectNames, crrtPoses, targetPoses, jointStateCrrt)
+

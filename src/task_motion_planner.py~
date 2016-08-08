@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+# Read on the joint_state_imp topic, and for each message received, answer with des velocities
+
+import rospy
+from rospy.numpy_msg import numpy_msg
+import numpy
+import time
+import pdb
+from numpy import linalg as LA
+
+from kuka_fri_bridge.msg    import JointStateImpedance
+from sensor_msgs.msg        import JointState
+
+class passAJointValue(object):
+    """convert kuka_fri_bridge/JointStateImpedance message to std_msgs/Float32MultiArray for position controller simulator"""
+    def __init__(self, jointValueSeq):
+        # pdb.set_trace() #breakpoint
+        self.totalActionNum = numpy.shape(jointValueSeq)[0]
+        self.jointValueSeq = jointValueSeq
+        self.crrtIndexAction = 0
+        self.js_sub = rospy.Subscriber("/joint_states", numpy_msg(JointState), self.js_cb, queue_size=3, tcp_nodelay=True)
+        self.pos_input_topic_type = JointStateImpedance
+        self.pass_pub = rospy.Publisher("/KUKA/joint_imp_cmd", numpy_msg(JointStateImpedance), queue_size = 3, tcp_nodelay = True, latch = False)
+
+        self.input_pos_msg = self.pos_input_topic_type()
+        # pdb.set_trace() #breakpoint
+        rospy_rate = rospy.Rate(20)
+        # rospy.loginfo("The new position: %d" % (position[0]))       
+
+    def js_cb(self, msg):
+        # pdb.set_trace() #breakpoint
+        self.refPositionCrrt = self.jointValueSeq[self.crrtIndexAction]
+        
+        diffPosition = self.refPositionCrrt - msg.position
+        
+        self.input_pos_msg.position = self.refPositionCrrt
+        # rospy_rate = rospy.Rate(20)
+        if (LA.norm(diffPosition) > 0.1) and (not rospy.is_shutdown()):
+            self.pass_pub.publish(self.input_pos_msg)
+        if (LA.norm(diffPosition) < 0.1) and (self.crrtIndexAction < self.totalActionNum-1):
+            self.crrtIndexAction = self.crrtIndexAction + 1
+        if self.crrtIndexAction != self.totalActionNum-1:
+            print 'refPosition:' + str(self.refPositionCrrt)
+            print 'diffPosition:' + str(LA.norm(diffPosition))
+
+    def stop(self):
+        '''Stop the object'''
+        self.pass_pub.unregister()
+
+
+def main():
+    jointValueSeq = [[0.29, -0.26, 0.11, -1.7, 0.96, 1.8, -2.43], [0.1, -0.32, 1, -0.5, 1, 2, 0], [0.15, -1.2, 1.02, -0.65, 0.98, -0.15, 0.22]]
+    rospy.init_node('task_motion_planner', anonymous=True) #
+    rospy.loginfo("%s: Starting" % (rospy.get_name())) # 
+    # time.sleep(1)
+    """
+    s = raw_input('please let it move. (y/n)?')
+    if s == 'y':
+        position = [0.29, -0.26, 0.11, -1.7, 0.96, 1.8, -2.43]
+    else:
+        position = [0,0,0,0,0,0,0]
+    """
+    # raw_input('Press any key to start.')
+
+    passingJointValue = passAJointValue(jointValueSeq)
+    rospy.spin()
+
+    rospy.loginfo("%s: Exiting" % (rospy.get_name()))
+    passingJointValue.stop()
+
+
+
+if __name__ == '__main__':
+    main()
+

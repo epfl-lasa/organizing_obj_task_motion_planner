@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<launch>
+  <node name="task_motion_planenr" pkg="task_motion_planner" type="task_motion_planner.py" output="screen"/>
+</launch>

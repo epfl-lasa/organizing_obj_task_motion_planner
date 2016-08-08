@@ -1,0 +1,2 @@
+sys.path[0]
+sys.path.insert(0, sys.path[0] + '/OpenRaveSim/python/Yue')
